@@ -8,6 +8,11 @@ class ResistorNetwork2(ResistorNetwork):
         self.Resistors = []  
         self.VSources = []  
 
+"""
+We are grabbing our information from ResistorNetwork2.
+We are using len and fsolve to find currents in the network
+"""
+    
     def AnalyzeCircuit(self):
         currents_initial_guess = [1]*len(self.Resistors)
         currents, info, ier, msg = fsolve(self.GetKirchoffVals, currents_initial_guess, full_output=True)
@@ -18,6 +23,10 @@ class ResistorNetwork2(ResistorNetwork):
                 print(f"I{idx} = {current:.1f}A")
         return currents
 
+"""
+We are using Kirchoff voltage laws and Kirchoff current laws for the following circuit
+"""
+    
     def GetKirchoffVals(self, currents):
         self.GetResistorByName('ad').Current = currents[0]
         self.GetResistorByName('bc').Current = currents[0]
@@ -33,6 +42,10 @@ class ResistorNetwork2(ResistorNetwork):
         KVL.append(Node_d_Current)
 
         return KVL
+
+"""
+This help us get the final output to get all the current and volatge for the network
+"""
 
 def main():
     net = ResistorNetwork2()
