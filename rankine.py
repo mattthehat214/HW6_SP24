@@ -139,6 +139,7 @@ class rankine():
         plt.xlabel(r's $\left(\frac{kJ}{kg\cdot K}\right)$')
         plt.ylabel(r'T $\left( ^{o}C \right)$')
         plt.title(self.name)
+        #This will plot and label everything we told it too.
 
         sMin=min(sfs)
         sMax=max(sgs)
@@ -157,6 +158,7 @@ class rankine():
         plt.text(sMin+0.05*(sMax-sMin), tMax, txt, ha='left', va='top')
 
         plt.show()
+        #This will plot all the data we entered in
 
 def main():
     rankine1= rankine(8,8000,t_high=500,eff_turbine=1.0, name='Rankine Cycle - Superheated at turbine inlet') #instantiate a rankine object to test it.
