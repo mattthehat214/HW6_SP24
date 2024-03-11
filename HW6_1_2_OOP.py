@@ -1,58 +1,71 @@
 from HW6_1_OOP import ResistorNetwork, Resistor, VoltageSource, Loop
 from scipy.optimize import fsolve
 
+# region class definitions
 class ResistorNetwork2(ResistorNetwork):
     def __init__(self):
         super().__init__()
-        self.Loops = []  
-        self.Resistors = []  
-        self.VSources = []  
 
-"""
-We are grabbing our information from ResistorNetwork2.
-We are using len and fsolve to find currents in the network
-"""
-    
+        self.Loops = []  # initialize an empty list of loop objects in the network
+        self.Resistors = []  # initialize an empty a list of resistor objects in the network
+        self.VSources = []  # initialize an empty a list of source objects in the network
+
+
     def AnalyzeCircuit(self):
-        currents_initial_guess = [1]*len(self.Resistors)
-        currents, info, ier, msg = fsolve(self.GetKirchoffVals, currents_initial_guess, full_output=True)
-        if ier != 1:
-            print(f"fsolve did not converge, message: {msg}")
-        else:
-            for idx, current in enumerate(currents, start=1):
-                print(f"I{idx} = {current:.1f}A")
-        return currents
+        """
+        Use fsolve to find currents in the resistor network.
+        1. KCL:  The total current flowing into any node in the network is zero.
+        2. KVL:  When traversing a closed loop in the circuit, net voltage drop must be zero.
+        :return: a list of the currents in the resistor network
+        """
+        # need to set the currents to that Kirchoff's laws are satisfied
+        i0 = [1, 1, 1, 1, 1]  # define an initial guess for the currents in the circuit
+        i = fsolve(self.GetKirchoffVals, i0)
+        # print output to the screen
+        print("I1 = {:0.1f}A".format(i[0]))
+        print("I2 = {:0.1f}A".format(i[1]))
+        print("I3 = {:0.1f}A".format(i[2]))
+        print("I4 = {:0.1f}A".format(i[3]))
+        print("I5 = {:0.1f}A".format(i[4]))
+        return i
 
-"""
-We are using Kirchoff voltage laws and Kirchoff current laws for the following circuit
-"""
-    
-    def GetKirchoffVals(self, currents):
-        self.GetResistorByName('ad').Current = currents[0]
-        self.GetResistorByName('bc').Current = currents[0]
-        self.GetResistorByName('ce').Current = currents[4]
-        self.GetResistorByName('de').Current = currents[3]
-        self.GetResistorByName('cd').Current = currents[2]
+    def GetKirchoffVals(self, i):
+        """
+        This function uses Kirchoff Voltage and Current laws to analyze this specific circuit
+        KVL:  The net voltage drop for a closed loop in a circuit should be zero
+        KCL:  The net current flow into a node in a circuit should be zero
+        :param i: a list of currents relevant to the circuit
+        :return: a list of loop voltage drops and node currents
+        """
+        # set current in resistors in the top loop
+        self.GetResistorByName('ad').Current = i[0]  # I_1 in diagram
+        self.GetResistorByName('bc').Current = i[0]  # I_2 in diagram
 
-        Node_c_Current = sum([currents[4], -currents[2], currents[0]])
-        Node_d_Current = sum([-currents[1], currents[2], -currents[0], currents[3]])
+        # set current in resistors in the bottom loop
+        self.GetResistorByName('ce').Current = i[4]  # Current 5
+        self.GetResistorByName('de').Current = i[3]  # Current 4
 
-        KVL = self.GetLoopVoltageDrops()
-        KVL.append(Node_c_Current)
-        KVL.append(Node_d_Current)
+        # calculate current through resistor 'cd'
+        self.GetResistorByName('cd').Current = i[2] # Current 3
+
+        # calculate net current into node c
+        Node_c_Current = sum([i[4], -i[2], i[0]])
+
+        # calculate net current into node d
+        Node_d_Current = sum([-i[1], i[2], -i[0], i[3]])
+
+
+        KVL = self.GetLoopVoltageDrops()  # three equations here
+        KVL.append(Node_c_Current)  # one equation here
+        KVL.append(Node_d_Current)  # one equation here
 
         return KVL
-
-"""
-This help us get the final output to get all the current and volatge for the network
-"""
 
 def main():
     net = ResistorNetwork2()
     net.BuildNetworkFromFile('ResistorNetwork_2.txt')
-    currents = net.AnalyzeCircuit()
-    print(f"Calculated currents for 1-5 : {[f'{current:.1f}A' for current in currents]}")
+    iVals = net.AnalyzeCircuit()
+    print(f"Calculated currents for 1-5 : {[f'{i:.1f}A' for i in iVals]}")
 
-if __name__ == "__main__":
-    main()
-  
+if __name__ == "__main__":#
+    main()#
