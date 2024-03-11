@@ -1,0 +1,101 @@
+# A resistor network is made of Resistors, Voltage Sources, Nodes and Loops
+# Nodes are given a unique name of one letter
+# Resistors are named by the nodes they connect arranged in alphabetical order.  If the current direction and traversal
+#      direction across a resistor is the same, the voltage decreases.  If the traversal direction and current direction
+#      are opposite, the voltage increases.
+# Voltage sources are named by the nodes they connect arranged in alphabetical order.  The voltage source value
+#      is in reference to the direction of the nodes (i.e., when traversing a loop in alphabetical order the voltage
+#      increases and when traversing the opposite direction, the voltage decreases)
+
+<Resistor>
+Name = ad
+Resistance = 2
+</Resistor>
+
+<Resistor>
+Name = bc
+Resistance = 2
+</Resistor>
+
+<Resistor>
+Name = cd
+Resistance = 1
+</Resistor>
+
+<Resistor>
+Name = ce
+Resistance = 4
+</Resistor>
+
+<Resistor>
+Name = de
+Resistance = 5
+</Resistor>
+
+
+<Source>
+Name = fe
+Type = Voltage
+Value = 32
+</Source>
+
+<Source>
+Name = ab
+Type = Voltage
+Value = 16
+</Source>
+
+<Loop>
+Name = L1
+Nodes = a,b,c,d
+</Loop>
+
+<Loop>
+Name = L2
+Nodes = c,d,e
+</Loop>
+
+<Loop>
+Name = L2
+Nodes = d,e,f
+</Loop>
+    
+    A loop is a closed path in a circuit.
+    
+    Attributes:
+        name (str): The name of the loop.
+        nodes (list): The list of node names that form the loop.
+    """
+    def __init__(self, name, nodes):
+        """
+        The constructor for Loop class.
+        
+        Parameters:
+           name (str): The name of the loop.
+           nodes (list): The list of node names that form the loop.
+        """
+        self.name = name
+        self.nodes = nodes
+
+
+# Create instances of Resistor class for each resistor in the network
+resistors = [
+    Resistor('ad', 2),
+    Resistor('bc', 2),
+    Resistor('cd', 1),
+    Resistor('ce', 4),
+    Resistor('ef', 5)  # This is the new 5 ohm resistor added in parallel with the voltage source 'de'
+]
+
+# Create instances of VoltageSource class for each voltage source in the network
+voltage_sources = [
+    VoltageSource('ef', 32),  # Note: This voltage source is across 'd' and 'e'. With the addition of 'ef', we may need to reconsider this naming.
+    VoltageSource('ab', 16)
+]
+
+# Create instances of Loop class for each loop in the circuit
+loops = [
+    Loop('L1', ['a', 'b', 'c', 'd']),
+    Loop('L2', ['c', 'd', 'e']),
+    Loop('L3', ['d', 'e', 'f'])  # This is the new loop that accounts for the new resistor 'ef'
+]
