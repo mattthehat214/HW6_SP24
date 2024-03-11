@@ -120,8 +120,8 @@ class steam():
 def main():
     inlet=steam(7350,name='Turbine Inlet') #not enough information to calculate
     inlet.x=0.9 #90 percent quality
-    inlet.calc()
-    inlet.print()
+    inlet.calc() #calculating inlet
+    inlet.print() #printing calculated inlet
 
     h1=inlet.h
     s1=inlet.s
@@ -129,12 +129,15 @@ def main():
 
     outlet=steam(100, s=inlet.s, name='Turbine Exit')
     outlet.print()
+    #print turbine exit
 
     another=steam(8575, h=2050, name='State 3')
     another.print()
+    #print state 3
 
     yetanother = steam(8575, h=3125, name='State 4')
     yetanother.print()
+    #print state 4
 
 #the following if statement causes main() to run
 #only if this file is being run explicitly, not if it is
